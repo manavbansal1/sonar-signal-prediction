@@ -110,24 +110,47 @@ print(f'Cross-validation scores: {cv_scores}')
 print(f'Mean CV Score: {cv_scores.mean():.4f} (+/- {cv_scores.std():.4f})')
 
 
+"""Saving the trained model to a file using pickle for future use"""
+# Save the trained model
+with open('sonar_model.pkl', 'wb') as model_file:
+    pickle.dump(model, model_file)
+
+# Save the scaler
+with open('scaler.pkl', 'wb') as scaler_file:
+    pickle.dump(scaler, scaler_file)
+
+print("\n✓ Model and scaler saved to successfully.")
+
 """Making a Predictive System"""
+
+'''
+    Predcts whether the object is a Rock or a Mine
+    input data: tuple of 60 sonar feature values
+
+    returns: "Rock" or "Mine"
+    and the confidence of prediction 
+'''
+def predict_sonar(input_data, model, scaler):
+    # changing the input_data to a numpy array
+    input_data_as_numpy_array = np.asarray(input_data)
+
+    # reshaping the numpy array as we are predicting for one instance
+    input_data_reshaped = input_data_as_numpy_array.reshape(1,-1)
+
+    # standardizing the input data
+    input_data_scaled = scaler.transform(input_data_reshaped)
+
+    # prediction
+    prediction = model.predict(input_data_scaled)
+    prediction_probability = model.predict_proba(input_data_scaled)
+
+    return prediction[0], prediction_probability[0]
+
+    
+
 # input data for a mine
 input_data = (0.0260,0.0363,0.0136,0.0272,0.0214,0.0338,0.0655,0.1400,0.1843,0.2354,0.2720,0.2442,0.1665,0.0336,0.1302,0.1708,0.2177,0.3175,0.3714,0.4552,0.5700,0.7397,0.8062,0.8837,0.9432,1.0000,0.9375,0.7603,0.7123,0.8358,0.7622,0.4567,0.1715,0.1549,0.1641,0.1869,0.2655,0.1713,0.0959,0.0768,0.0847,0.2076,0.2505,0.1862,0.1439,0.1470,0.0991,0.0041,0.0154,0.0116,0.0181,0.0146,0.0129,0.0047,0.0039,0.0061,0.0040,0.0036,0.0061,0.0115)
 # input_data for a mine
 
-# changing the input_data to a numpy array
-input_data_as_numpy_array = np.asarray(input_data)
-
-# reshaping the numpy array as we are predicting for one instance
-input_data_reshaped = input_data_as_numpy_array.reshape(1,-1)
-
-# prediction
-prediction = model.predict(input_data_reshaped)
-print(prediction)
-
-if (prediction[0] == 'R'):
-    print('The object is a Rock')
-else:
-    print('The object is a Mine')
 
     
