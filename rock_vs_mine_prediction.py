@@ -146,11 +146,66 @@ def predict_sonar(input_data, model, scaler):
 
     return prediction[0], prediction_probability[0]
 
+"""
+    Interactive system for making predictions
+"""
+def interactive_prediction():
     
+    print(f'\n{"="*50}')
+    print("INTERACTIVE PREDICTION SYSTEM")
+    print(f'{"="*50}')
+    print("\nOptions:")
+    print("1. Use sample data")
+    print("2. Enter custom data (60 values)")
+    print("3. Exit")
+    
+    choice = input("\nEnter your choice (1-3): ")
+    
+    if choice == '1':
+        # Use the predefined sample data
+        pred, probs = predict_sonar(input_data, model, scaler)
+        print(f"\nPrediction: {'Rock' if pred == 'R' else 'Mine'}")
+        print(f"Confidence: {max(probs)*100:.2f}%")
+    
+    elif choice == '2':
+        print("\nEnter 60 feature values separated by commas:")
+        try:
+            user_input = input()
+            features = tuple(map(float, user_input.split(',')))
+            
+            if len(features) != 60:
+                print(f"Error: Expected 60 values, got {len(features)}")
+            else:
+                pred, probs = predict_sonar(features, model, scaler)
+                print(f"\nPrediction: {'Rock' if pred == 'R' else 'Mine'}")
+                print(f"Confidence: {max(probs)*100:.2f}%")
+        except ValueError:
+            print("Error: Invalid input format!")
+    
+    elif choice == '3':
+        print("\nExiting...")
+    else:
+        print("\nInvalid choice!") 
+
 
 # input data for a mine
 input_data = (0.0260,0.0363,0.0136,0.0272,0.0214,0.0338,0.0655,0.1400,0.1843,0.2354,0.2720,0.2442,0.1665,0.0336,0.1302,0.1708,0.2177,0.3175,0.3714,0.4552,0.5700,0.7397,0.8062,0.8837,0.9432,1.0000,0.9375,0.7603,0.7123,0.8358,0.7622,0.4567,0.1715,0.1549,0.1641,0.1869,0.2655,0.1713,0.0959,0.0768,0.0847,0.2076,0.2505,0.1862,0.1439,0.1470,0.0991,0.0041,0.0154,0.0116,0.0181,0.0146,0.0129,0.0047,0.0039,0.0061,0.0040,0.0036,0.0061,0.0115)
-# input_data for a mine
+
+# example usage of the predictive system
+print(f'\n{"="*50}')
+print("PREDICTION EXAMPLE")
+print(f'{"="*50}')
+
+prediction, probabilities = predict_sonar(input_data, model, scaler)
+
+print(f"\nPrediction: {prediction}")
+print(f"Confidence - Mine: {probabilities[0]*100:.2f}%")
+print(f"Confidence - Rock: {probabilities[1]*100:.2f}%")
 
 
-    
+# Using the interactive prediction system
+interactive_prediction()
+
+print(f'\n{"="*50}')
+print("ANALYSIS COMPLETE!")
+print(f'{"="*50}')
