@@ -3,7 +3,7 @@
 """Importing the Dependencies"""
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 from sklearn.preprocessing import StandardScaler
@@ -99,6 +99,16 @@ print("\nConfusion Matrix:")
 print(confusion_matrix(Y_test, X_test_prediction))
 print("\nClassification Report:")
 print(classification_report(Y_test, X_test_prediction, target_names=['M (Mine)', 'R (Rock)']))
+
+# Reliable accuracy checking through cross-validation
+# Perform 5-fold cross-validation
+cv_scores = cross_val_score(model, X_train_scaled, Y_train, cv=5)
+print(f'\n{"="*50}')
+print("CROSS-VALIDATION RESULTS")
+print(f'{"="*50}')
+print(f'Cross-validation scores: {cv_scores}')
+print(f'Mean CV Score: {cv_scores.mean():.4f} (+/- {cv_scores.std():.4f})')
+
 
 """Making a Predictive System"""
 # input data for a mine
