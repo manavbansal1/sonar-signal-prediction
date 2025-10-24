@@ -5,7 +5,8 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.preprocessing import StandardScaler
 import pickle
 import warnings
 warnings.filterwarnings('ignore')
@@ -58,25 +59,46 @@ print(f"\nOriginal dataset: {X.shape}")
 print(f"Training set: {X_train.shape}")
 print(f"Test set: {X_test.shape}")
 
-"""Model Training - Logistic Regression Model"""
-model = LogisticRegression()
+# Standardizing the features for better model performance
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
 
-# Training the Logistic Regression Model
-model.fit(X_train, Y_train)
-print("Model Training Completed.")
+print("\n✓ Feature scaling completed!")
+
+"""Model Training --> Logistic Regression"""
+
+model = LogisticRegression(max_iter=1000)
+
+# Training the Logistic Regression model with training data
+model.fit(X_train_scaled, Y_train)
+print("\n✓ Model training completed!")
 
 """Model Evaluation"""
-# accuracy on training data
-X_train_prediction = model.predict(X_train)
-training_data_accuracy = accuracy_score(X_train_prediction, Y_train)
 
-print('Accuracy on Training data : ', training_data_accuracy)
+# Accuracy on training data
+X_train_prediction = model.predict(X_train_scaled)
+training_data_accuracy = accuracy_score(Y_train, X_train_prediction)
 
-# accuracy on test data
-X_test_prediction = model.predict(X_test)
-test_data_accuracy = accuracy_score(X_test_prediction, Y_test)
+print(f'\n{"="*50}')
+print("TRAINING DATA EVALUATION")
+print(f'{"="*50}')
+print(f'Accuracy on training data: {training_data_accuracy:.4f} ({training_data_accuracy*100:.2f}%)')
 
-print('Accuracy on Test data : ', test_data_accuracy)
+# Accuracy on test data
+X_test_prediction = model.predict(X_test_scaled)
+test_data_accuracy = accuracy_score(Y_test, X_test_prediction)
+
+print(f'\n{"="*50}')
+print("TEST DATA EVALUATION")
+print(f'{"="*50}')
+print(f'Accuracy on test data: {test_data_accuracy:.4f} ({test_data_accuracy*100:.2f}%)')
+
+# Detailed classification report
+print("\nConfusion Matrix:")
+print(confusion_matrix(Y_test, X_test_prediction))
+print("\nClassification Report:")
+print(classification_report(Y_test, X_test_prediction, target_names=['M (Mine)', 'R (Rock)']))
 
 """Making a Predictive System"""
 # input data for a mine
